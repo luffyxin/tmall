@@ -3,6 +3,10 @@ import java.util.List;
 
 import com.dx.tmall.dao.CategoryDAO;
 import com.dx.tmall.pojo.Category;
+import com.dx.tmall.util.Page4Navigate;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -20,5 +24,12 @@ public class CategoryService {
     public List<Category> list() {
         Sort sort = new Sort(Sort.Direction.DESC, "id");
         return categoryDAO.findAll(sort);
+    }
+    public Page4Navigate<Category>  list(int start,int size,int navigatePages){
+       Sort sort=new Sort(Sort.Direction.DESC,"id");
+       Pageable pageable=new PageRequest(start,size,sort);
+       Page pageFromJPA=categoryDAO.findAll(pageable);
+
+       return new Page4Navigate<>(pageFromJPA,navigatePages);
     }
 }
