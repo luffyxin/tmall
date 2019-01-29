@@ -2,12 +2,16 @@ package com.dx.tmall.controller;
 
 import com.dx.tmall.pojo.Category;
 import com.dx.tmall.service.CategoryService;
+import com.dx.tmall.util.ImageUtil;
 import com.dx.tmall.util.Page4Navigate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.List;
 
 @RestController
@@ -21,5 +25,33 @@ public class CategoryController {
         start = start<0?0:start;
         Page4Navigate<Category> page=categoryService.list(start,size,5);
         return  page;
+    }
+
+    @PostMapping("/categories")
+    public Object add(Category bean, MultipartFile image, HttpServletRequest request)throws
+            Exception{
+        categoryService.add(bean);
+        saveOrUpdateImageFile(bean,image,request);
+        return bean;
+    }
+    public void saveOrUpdateImageFile(Category bean, MultipartFile image, HttpServletRequest request)
+        throws Exception{
+        File imageFolder=new File(request.getServletContext().getRealPath("img/category"));
+        File file=new File(imageFolder,bean.getId()+".jpg");
+        if(!file.getParentFile().exists()){
+            file.getParentFile().mkdir();
+        }
+        image.transferTo(file);
+        BufferedImage img= ImageUtil.change2jpg(file);
+        ImageIO.write(img,"jpg",file);
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public String delete(@PathVariable("id") int id,HttpServletRequest request) throws Exception{
+        categoryService.delete(id);
+        File imageFolder=new File(request.getServletContext().getRealPath("img/category"));
+        File file=new File(imageFolder,id+".jpg");
+        file.delete();
+        return null;
     }
 }

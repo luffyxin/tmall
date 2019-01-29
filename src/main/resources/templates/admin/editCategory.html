@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="include/admin/adminHeader::html('编辑分类')">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:replace="include/admin/adminNavigator::html" ></div>
+
+<script>
+    $(function () {
+       var data4Vue = {
+            uri:'categories',
+           listURL:'admin_category_list',
+           bean:{id:0,name:'',hp:'0'},
+           file:''
+       };
+       var vue=new vue({
+           el:'#workingArea',
+           data:data4Vue,
+           mouted:function () {
+               this.get();
+           },
+           methods:{
+               get:function () {
+                   var id=getUrlParms("id");
+                   var url=this.uri+"/"+id;
+               },
+           }
+       }
+
+       );
+    });
+</script>
+<div id="workingArea">
+    <ol class="breadcrumb">
+        <li><a href="admin_category_list">所有分类</a></li>
+        <li class="active">编辑分类</li>
+    </ol>
+    <div class="panel panel-warning editDiv">
+        <div class="panel-heading">编辑分类</div>
+        <div class="panel-body">
+
+            <table class="editTable">
+                <tr>
+                    <td>分类图片</td>
+                    <td>
+                        <input @keyup.enter="update" v-model.trim="bean.name" type="text"
+                         class="form-control"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>分类图片</td>
+                    <td>
+                        <input id="categoryPic" accept="image/*" type="file" name="image" @change="getFile($event)"/>
+                    </td>
+                </tr>
+                <tr class="submitTR">
+                    <td colspan="2" align="center">
+                        <input type="hidden" name="id" v-model.trim="bean.id">
+                        <a href="#nowhere" class="btn btn-success" @click="update">提 交</a>
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+<div th:replace="include/admin/adminFooter::html"></div>
+</html>
