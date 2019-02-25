@@ -5,31 +5,48 @@
     <title>Title</title>
 </head>
 <body>
-<div th:replace="include/admin/adminNavigator::html" ></div>
+<div th:replace="include/admin/adminNavigator::html"></div>
 
 <script>
     $(function () {
-       var data4Vue = {
-            uri:'categories',
-           listURL:'admin_category_list',
-           bean:{id:0,name:'',hp:'0'},
-           file:''
-       };
-       var vue=new vue({
-           el:'#workingArea',
-           data:data4Vue,
-           mouted:function () {
-               this.get();
-           },
-           methods:{
-               get:function () {
-                   var id=getUrlParms("id");
-                   var url=this.uri+"/"+id;
-               },
-           }
-       }
+        var data4Vue = {
+            uri: 'categories',
+            listURL: 'admin_category_list',
+            bean: {id: 0, name: '', hp: '0'},
+            file: ''
+        };
+        var vue = new Vue({
+                el: '#workingArea',
+                data: data4Vue,
+                mouted: function () {
+                    this.get();
+                },
+                methods: {
+                    get: function () {
+                        var id = getUrlParms("id");
+                        var url = this.uri + "/" + id;
+                        axios.get(url).then(function (response) {
+                            vue.bean = response.data;
+                        })
+                    },
+                    update: function () {
+                        if (!checkEmpty(this.bean.name, "分类名称")) {
+                            return;
+                        }
+                        var url = this.uri + "/" + this.bean.id;
 
-       );
+                        var formData = new FormData();
+                        formData.append("image", this.file);
+                        formData.append("name", this.bean.name);
+                        axios.put(url, formData).then(function (response) {
+                            location.href = vue.listURL;
+                        });
+                    },
+                    getFile: function (event) {
+                        this.file = event.target.files[0];
+                    }
+                }
+            });
     });
 </script>
 <div id="workingArea">
@@ -46,7 +63,7 @@
                     <td>分类图片</td>
                     <td>
                         <input @keyup.enter="update" v-model.trim="bean.name" type="text"
-                         class="form-control"/>
+                               class="form-control"/>
                     </td>
                 </tr>
                 <tr>

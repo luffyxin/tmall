@@ -54,4 +54,22 @@ public class CategoryController {
         file.delete();
         return null;
     }
+
+    @GetMapping("/categories/{id}")
+    public Category get(@PathVariable("id") int id)throws Exception{
+        Category category= categoryService.get(id);
+        return category;
+    }
+
+    @PutMapping("/categories/{id}")
+    public Object update(Category bean,MultipartFile image, HttpServletRequest request)
+        throws Exception{
+        String name=request.getParameter("name");
+        bean.setName(name);
+        categoryService.update(bean);
+        if(image!=null){
+            saveOrUpdateImageFile(bean,image,request);
+        }
+        return bean;
+    }
 }
