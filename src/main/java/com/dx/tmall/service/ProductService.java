@@ -11,6 +11,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 应用模块名称<p>
@@ -29,6 +31,9 @@ public class ProductService {
 
     @Resource
     CategoryService categoryService;
+
+    @Resource
+    ProductImageService productImageService;
 
     public void add(Product bean){
         productDAO.save(bean);
@@ -51,6 +56,34 @@ public class ProductService {
         Pageable pageable=new PageRequest(start,size,sort);
         Page<Product> pageFromJPA=productDAO.findByCategory(category,pageable);
         return new Page4Navigate<>(pageFromJPA,navigatePages);
+    }
+    public void fill(List<Category> categories){
+        for(Category category:categories){
+            fill(category);
+        }
+    }
+
+    public void fill(Category category){
+        List<Product> products=listByCategory(category);
+        productImageService.setFirstProdutImages(products);
+        category.setProducts(products);
+    }
+    public void fillByRow(List<Category> categories){
+        int productNumberEachRow = 8;
+        for(Category category:categories){
+            List<Product> products=category.getProducts();
+            List<List<Product>> productsByRow=new ArrayList<>();
+            for(int i=0;i<products.size();i+=productNumberEachRow){
+                int size=i+productNumberEachRow;
+                size =size>products.size()?products.size():size;
+                List<Product> productsOfEachRow = products.subList(i,size);
+                productsByRow.add(productsOfEachRow);
+            }
+            category.setProductsByRow(productsByRow);
+        }
+    }
+    public List<Product> listByCategory(Category category){
+        return productDAO.findByCateOrderById(category);
     }
 
 
