@@ -3,7 +3,6 @@ package com.dx.tmall.controller;
 import com.dx.tmall.pojo.Category;
 import com.dx.tmall.service.CategoryService;
 import com.dx.tmall.service.ProductService;
-import jdk.nashorn.internal.objects.annotations.Getter;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 

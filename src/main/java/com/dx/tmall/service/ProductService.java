@@ -4,6 +4,7 @@ import com.dx.tmall.dao.ProductDAO;
 import com.dx.tmall.pojo.Category;
 import com.dx.tmall.pojo.Product;
 import com.dx.tmall.util.Page4Navigate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,13 +27,13 @@ import java.util.List;
 @Service
 public class ProductService {
 
-    @Resource
+    @Autowired
     ProductDAO productDAO;
 
-    @Resource
+    @Autowired
     CategoryService categoryService;
 
-    @Resource
+    @Autowired
     ProductImageService productImageService;
 
     public void add(Product bean){
@@ -83,7 +84,7 @@ public class ProductService {
         }
     }
     public List<Product> listByCategory(Category category){
-        return productDAO.findByCateOrderById(category);
+        return productDAO.findByCategoryOrderById(category);
     }
 
 
